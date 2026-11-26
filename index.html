@@ -6,16 +6,83 @@
   <title>NexusPROJECT</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    /* ... ТВОИ СТИЛИ (оставь как были) ... */
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-    body { background: #171a21; color: #c7d5e0; min-height: 100vh; }
+    body { background: #171a21; color: #c7d5e0; min-height: 100vh; display: flex; flex-direction: column; }
     .container { max-width: 1200px; margin: 0 auto; padding: 0 16px; width: 100%; }
-    .header { background: #1b2838; padding: 12px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.5); display: flex; align-items: center; }
-    
-    /* Стили для окна "Это вы?" */
+
+    .header { background: #1b2838; padding: 12px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.5); position: relative; z-index: 100; }
+    .header .container { display: flex; align-items: center; gap: 24px; }
+    .logo { display: flex; align-items: center; gap: 8px; font-size: 24px; font-weight: 800; cursor: pointer; text-decoration: none; }
+    .logo .np-mark { width: 38px; height: 38px; background: linear-gradient(135deg,#66c0f4,#2a6b9e); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #0e141b; font-weight: 900; font-size: 18px; }
+    .logo span { color: #66c0f4; }
+    .nav-links { display: flex; gap: 24px; margin-left: 16px; }
+    .nav-links a { color: #b8b6b4; text-decoration: none; font-size: 15px; }
+    .nav-links a:hover { color: #fff; }
+    .nav-links a.active { color: #66c0f4; font-weight: 600; }
+    .header-right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+    .search-box { background: #316282; border-radius: 4px; padding: 6px 12px; display: flex; align-items: center; gap: 8px; }
+    .search-box i { color: #8fbbd9; font-size: 14px; }
+    .search-box input { background: transparent; border: none; outline: none; color: #e0e0e0; font-size: 14px; width: 150px; }
+
+    .btn-login { background: transparent; border: 1px solid #4a6a8a; color: #c7d5e0; padding: 7px 16px; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .btn-login:hover { background: #2a475e; border-color: #66c0f4; color: #fff; }
+    .btn-register { background: #4c6b22; border: none; color: #beee11; padding: 8px 18px; border-radius: 4px; font-size: 13px; font-weight: 700; cursor: pointer; }
+    .btn-register:hover { background: #5c7e2a; }
+
+    /* Профиль */
+    .user-profile { display: none; align-items: center; gap: 10px; cursor: pointer; position: relative; padding: 4px 8px; border-radius: 6px; }
+    .user-profile:hover { background: #2a475e; }
+    .user-profile .avatar { width: 36px; height: 36px; background: #4c6b8a; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 14px; border: 2px solid #66c0f4; }
+    .user-profile .username { color: #e0e0e0; font-size: 14px; font-weight: 600; }
+    .profile-menu { display: none; position: absolute; top: calc(100% + 6px); right: 0; background: #1b2838; border: 1px solid #2a475e; border-radius: 8px; min-width: 240px; box-shadow: 0 12px 30px rgba(0,0,0,0.7); z-index: 200; }
+    .profile-menu.open { display: block; }
+    .profile-menu-head { padding: 16px; border-bottom: 1px solid #2a3f4e; background: #16202d; }
+    .profile-menu-head .pm-name { color: #fff; font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .profile-menu-head .pm-tag { color: #66c0f4; font-size: 12px; font-weight: 600; }
+    .profile-menu-head .pm-id { color: #8f98a0; font-size: 11px; margin-top: 6px; font-family: monospace; }
+    .profile-menu-item { display: flex; align-items: center; gap: 10px; padding: 11px 16px; color: #c7d5e0; font-size: 13px; cursor: pointer; }
+    .profile-menu-item:hover { background: #2a475e; color: #fff; }
+    .profile-menu-item.danger { color: #ff6b6b; }
+
+    .main { flex: 1; padding: 32px 0 48px; }
+    .page { display: none; }
+    .page.active { display: block; }
+    .welcome-banner { background: linear-gradient(135deg,#1a3a4a,#0e1a22); border-radius: 12px; padding: 40px; margin-bottom: 40px; border: 1px solid #2a475e; text-align: center; }
+    .welcome-banner h1 { font-size: 34px; font-weight: 800; color: #fff; margin-bottom: 12px; }
+    .welcome-banner h1 span { color: #66c0f4; }
+    .welcome-banner p { color: #a0b8c8; font-size: 17px; margin-bottom: 26px; max-width: 560px; margin-left: auto; margin-right: auto; line-height: 1.5; }
+    .welcome-banner .btn-register { padding: 14px 36px; font-size: 16px; border-radius: 6px; }
+    .empty-state { text-align: center; padding: 60px 20px; color: #5a7184; }
+    .empty-state i { font-size: 64px; margin-bottom: 16px; opacity: 0.5; }
+    .empty-state h3 { font-size: 20px; color: #8fbbd9; margin-bottom: 8px; }
+
+    .auth-wrap { display: flex; justify-content: center; padding: 20px 0 40px; }
+    .auth-box { background: #1b2838; border: 1px solid #2a475e; border-radius: 12px; width: 100%; max-width: 440px; padding: 32px; box-shadow: 0 20px 60px rgba(0,0,0,0.8); }
+    .auth-box h1 { color: #fff; font-size: 24px; margin-bottom: 6px; }
+    .auth-box .subtitle { color: #8fbbd9; font-size: 14px; margin-bottom: 24px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; color: #8fbbd9; margin-bottom: 6px; }
+    .form-group input { width: 100%; background: #0e141b; border: 1px solid #2a475e; border-radius: 4px; padding: 11px 14px; color: #e0e0e0; font-size: 14px; outline: none; }
+    .form-group input:focus { border-color: #66c0f4; }
+    .form-group .error-text { color: #ff6b6b; font-size: 12px; margin-top: 4px; display: none; }
+    .form-group.invalid input { border-color: #ff6b6b; }
+    .form-group.invalid .error-text { display: block; }
+    .btn-submit { width: 100%; background: #4c6b22; border: none; color: #beee11; padding: 13px; border-radius: 4px; font-size: 15px; font-weight: 700; cursor: pointer; }
+    .btn-submit:hover { background: #5c7e2a; }
+    .btn-submit:disabled { opacity: .6; cursor: not-allowed; }
+    .success-message { background: #1a3a2a; border: 1px solid #4c6b22; border-radius: 6px; padding: 14px 16px; color: #beee11; font-size: 14px; font-weight: 600; display: none; margin-bottom: 16px; }
+    .success-message.show { display: block; }
+    .switch-link { text-align: center; margin-top: 20px; font-size: 13px; color: #8f98a0; }
+    .switch-link a { color: #66c0f4; text-decoration: none; font-weight: 600; cursor: pointer; }
+
+    .footer { background: #0e141b; border-top: 1px solid #2a3f4e; padding: 24px 0; margin-top: auto; color: #8f98a0; font-size: 13px; }
+    .footer .container { display: flex; justify-content: space-between; align-items: center; }
+    .footer-links a { color: #8f98a0; text-decoration: none; margin-right: 24px; }
+
+    /* ОКНО ДЛЯ ЛАУНЧЕРА ("Это вы?") */
     .auth-popup-overlay {
       display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.8); z-index: 9999;
+      background: rgba(0,0,0,0.85); z-index: 9999;
       align-items: center; justify-content: center;
     }
     .auth-popup-overlay.active { display: flex; }
@@ -23,38 +90,160 @@
       background: #1b2838; border: 2px solid #66c0f4; border-radius: 12px;
       padding: 30px; text-align: center; width: 350px;
       box-shadow: 0 10px 40px rgba(102,192,244,0.3);
-      animation: popIn 0.3s ease-out;
     }
-    @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-    
     .auth-popup h2 { color: #fff; margin-bottom: 10px; font-size: 22px; }
     .auth-popup p { color: #8fbbd9; margin-bottom: 20px; font-size: 14px; }
-    .auth-popup .target-id { color: #beee11; font-weight: bold; font-size: 18px; font-family: monospace; }
-    
-    .popup-buttons { display: flex; gap: 15px; justify-content: center; }
+    .auth-popup .target-id { color: #beee11; font-weight: bold; font-size: 20px; font-family: monospace; margin: 10px 0; }
+    .popup-buttons { display: flex; gap: 15px; justify-content: center; margin-top: 20px; }
     .btn-yes { background: #4c6b22; color: #beee11; border: none; padding: 10px 25px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px; flex: 1; }
+    .btn-yes:hover { background: #5c7e2a; }
     .btn-no { background: #5c2a2a; color: #ff6b6b; border: none; padding: 10px 25px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px; flex: 1; }
-    
-    .success-popup { display: none; }
-    .success-popup.active { display: block; }
+    .btn-no:hover { background: #7a2a2a; }
+
+    @media (max-width: 900px) {
+      .header .container { flex-wrap: wrap; gap: 12px; }
+      .nav-links { order: 3; width: 100%; margin-left: 0; gap: 16px; }
+      .header-right { margin-left: auto; }
+    }
+    @media (max-width: 700px) { .search-box { display: none; } }
+    @media (max-width: 600px) {
+      .header-right { gap: 8px; }
+      .btn-login, .btn-register { padding: 6px 10px; font-size: 12px; }
+      .user-profile .username { display: none; }
+    }
   </style>
 </head>
 <body>
 
   <header class="header">
     <div class="container">
-      <div class="logo"><div class="np-mark" style="background: #66c0f4; padding: 5px; border-radius: 5px; display: inline-block;">NP</div> NexusPROJECT</div>
+      <div class="logo" onclick="showPage('home')">
+        <div class="np-mark">NP</div>
+        <span>NexusPROJECT</span>
+      </div>
+      <nav class="nav-links">
+        <a href="#" class="active" onclick="showPage('home'); return false;">Магазин</a>
+        <a href="#" onclick="return false;">Библиотека</a>
+      </nav>
+      <div class="header-right">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Поиск...">
+        </div>
+
+        <div id="authButtons" style="display:flex; gap:10px;">
+          <button type="button" class="btn-login" onclick="showPage('login')">Войти</button>
+          <button type="button" class="btn-register" onclick="showPage('register')">Регистрация</button>
+        </div>
+
+        <div class="user-profile" id="userProfile">
+          <div class="avatar" id="userAvatar">N</div>
+          <span class="username" id="userName">Игрок</span>
+          <div class="profile-menu" id="profileMenu">
+            <div class="profile-menu-head">
+              <div class="pm-name" id="pmName">Игрок</div>
+              <div class="pm-tag" id="pmTag">@player</div>
+              <div class="pm-id" id="pmId">NP-000000</div>
+            </div>
+            <div class="profile-menu-item danger" onclick="logout(); event.stopPropagation();">
+               Выйти
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </header>
 
-  <!-- ОКНО ПОДТВЕРЖДЕНИЯ -->
+  <main class="main">
+    <div class="container">
+      <!-- ГЛАВНАЯ -->
+      <div class="page active" id="page-home">
+        <div class="welcome-banner" id="welcomeBanner">
+          <h1>Добро пожаловать в <span>NexusPROJECT</span></h1>
+          <p>Создайте аккаунт, чтобы получить доступ к библиотеке, сообществу и эксклюзивным предложениям платформы.</p>
+          <button type="button" class="btn-register" onclick="showPage('register')">Создать аккаунт</button>
+        </div>
+        <div class="empty-state">
+          <i class="fas fa-gamepad"></i>
+          <h3>Скоро здесь появятся игры</h3>
+          <p>Мы готовим каталог. А пока — зарегистрируйтесь, чтобы ничего не пропустить.</p>
+        </div>
+      </div>
+
+      <!-- РЕГИСТРАЦИЯ -->
+      <div class="page" id="page-register">
+        <div class="auth-wrap">
+          <div class="auth-box">
+            <h1>Регистрация</h1>
+            <p class="subtitle">Создайте аккаунт NexusPROJECT</p>
+            <div class="success-message" id="registerSuccess">Аккаунт успешно создан!</div>
+            <form id="registerForm" novalidate>
+              <div class="form-group" id="regNameGroup">
+                <label>Имя игрока</label>
+                <input type="text" id="regName" placeholder="Ваш никнейм (3–20 символов)">
+                <div class="error-text">Имя должно быть от 3 до 20 символов</div>
+              </div>
+              <div class="form-group" id="regPasswordGroup">
+                <label>Пароль</label>
+                <input type="password" id="regPassword" placeholder="Минимум 6 символов">
+                <div class="error-text">Пароль должен содержать минимум 6 символов, 1 заглавную букву и 1 цифру</div>
+              </div>
+              <div class="form-group" id="regConfirmGroup">
+                <label>Подтвердите пароль</label>
+                <input type="password" id="regConfirm" placeholder="Повторите пароль">
+                <div class="error-text">Пароли не совпадают</div>
+              </div>
+              <button type="submit" class="btn-submit" id="regSubmitBtn">Создать аккаунт</button>
+            </form>
+            <div class="switch-link">Уже есть аккаунт? <a onclick="showPage('login')">Войти</a></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ВХОД -->
+      <div class="page" id="page-login">
+        <div class="auth-wrap">
+          <div class="auth-box">
+            <h1>Вход</h1>
+            <p class="subtitle">Войдите в аккаунт NexusPROJECT</p>
+            <div class="success-message" id="loginSuccess">Вы успешно вошли!</div>
+            <form id="loginForm" novalidate>
+              <div class="form-group" id="loginNameGroup">
+                <label>Логин</label>
+                <input type="text" id="loginName" placeholder="Ваш никнейм">
+                <div class="error-text">Введите логин</div>
+              </div>
+              <div class="form-group" id="loginPasswordGroup">
+                <label>Пароль</label>
+                <input type="password" id="loginPassword" placeholder="Пароль">
+                <div class="error-text">Пароль от 6 символов</div>
+              </div>
+              <button type="submit" class="btn-submit" id="loginSubmitBtn">Войти</button>
+            </form>
+            <div class="switch-link">Нет аккаунта? <a onclick="showPage('register')">Зарегистрироваться</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-links">
+        <a href="#">О NexusPROJECT</a>
+        <a href="#">Поддержка</a>
+      </div>
+      <div><strong style="color:#66c0f4;">NP</strong> © 2025 NexusPROJECT.</div>
+    </div>
+  </footer>
+
+  <!-- ВСПЛЫВАЮЩЕЕ ОКНО ДЛЯ ЛАУНЧЕРА -->
   <div class="auth-popup-overlay" id="authPopup">
     <div class="auth-popup" id="popupContent">
       <h2>Запрос от лаунчера</h2>
-      <p>Лаунчер пытается войти в аккаунт:</p>
+      <p>Лаунчер пытается войти в профиль:</p>
       <div class="target-id" id="popupTargetId">NP-000000</div>
-      <p style="margin-top: 10px;">Это вы?</p>
-      
+      <p>Это вы?</p>
       <div class="popup-buttons">
         <button class="btn-yes" onclick="confirmLogin()">Да, это я</button>
         <button class="btn-no" onclick="denyLogin()">Нет</button>
@@ -63,38 +252,125 @@
   </div>
 
   <script>
-    // 1. Проверяем, есть ли в ссылке параметр от лаунчера (например: index.html?launcher_id=NP-123456)
+    // --- ЛОГИКА САЙТА (Регистрация, Вход, Профиль) ---
+    function showPage(name) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-' + name).classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    function checkPassword(pwd) {
+      return pwd.length >= 6 && /[A-ZА-ЯЁ]/.test(pwd) && /[0-9]/.test(pwd);
+    }
+
+    function generateUserId() {
+      return 'NP-' + Math.floor(100000 + Math.random() * 900000);
+    }
+
+    document.getElementById('registerForm').onsubmit = function (e) {
+      e.preventDefault();
+      let name = document.getElementById('regName').value.trim();
+      let pass = document.getElementById('regPassword').value;
+      let confirm = document.getElementById('regConfirm').value;
+      let valid = true;
+
+      document.querySelectorAll('.form-group').forEach(g => g.classList.remove('invalid'));
+
+      if (name.length < 3 || name.length > 20) { document.getElementById('regNameGroup').classList.add('invalid'); valid = false; }
+      if (!checkPassword(pass)) { document.getElementById('regPasswordGroup').classList.add('invalid'); valid = false; }
+      if (pass !== confirm) { document.getElementById('regConfirmGroup').classList.add('invalid'); valid = false; }
+
+      if (!valid) return;
+
+      let btn = document.getElementById('regSubmitBtn');
+      btn.disabled = true; btn.textContent = 'Создаём...';
+      
+      let userData = { name: name, id: generateUserId() };
+      localStorage.setItem('np_user', JSON.stringify(userData));
+
+      setTimeout(() => {
+        btn.disabled = false; btn.textContent = 'Создать аккаунт';
+        document.getElementById('registerForm').reset();
+        loggedIn(userData);
+        showPage('home');
+      }, 1000);
+    };
+
+    document.getElementById('loginForm').onsubmit = function (e) {
+      e.preventDefault();
+      let name = document.getElementById('loginName').value.trim();
+      let pass = document.getElementById('loginPassword').value;
+      if (name === '' || pass.length < 6) return;
+
+      let userData = { name: name, id: generateUserId() };
+      localStorage.setItem('np_user', JSON.stringify(userData));
+      loggedIn(userData);
+      showPage('home');
+    };
+
+    function loggedIn(user) {
+      document.getElementById('authButtons').style.display = 'none';
+      document.getElementById('userProfile').style.display = 'flex';
+      document.getElementById('userName').textContent = user.name;
+      document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
+      document.getElementById('pmName').textContent = user.name;
+      document.getElementById('pmTag').textContent = '@' + user.name.toLowerCase();
+      document.getElementById('pmId').textContent = user.id;
+      
+      let banner = document.getElementById('welcomeBanner');
+      if (banner) banner.style.display = 'none';
+    }
+
+    function logout() {
+      localStorage.removeItem('np_user');
+      document.getElementById('userProfile').style.display = 'none';
+      document.getElementById('authButtons').style.display = 'flex';
+      document.getElementById('welcomeBanner').style.display = 'block';
+      showPage('home');
+    }
+
+    document.getElementById('userProfile').onclick = function (e) {
+      if (e.target.closest('.profile-menu')) return;
+      document.getElementById('profileMenu').classList.toggle('open');
+    };
+    document.addEventListener('click', function(e) {
+      if (!document.getElementById('userProfile').contains(e.target)) {
+        document.getElementById('profileMenu').classList.remove('open');
+      }
+    });
+
+    // --- ЛОГИКА ДЛЯ ЛАУНЧЕРА (Окно "Это вы?") ---
     window.onload = function() {
-      var urlParams = new URLSearchParams(window.location.search);
-      var launcherId = urlParams.get('launcher_id');
+      // Проверяем сессию
+      let saved = localStorage.getItem('np_user');
+      if (saved) loggedIn(JSON.parse(saved));
+
+      // Проверяем, запущен ли сайт из лаунчера (передался ли ID)
+      let urlParams = new URLSearchParams(window.location.search);
+      let launcherId = urlParams.get('launcher_id');
       
       if (launcherId) {
-        // Если есть ID, показываем окно и подставляем ID
         document.getElementById('popupTargetId').textContent = launcherId;
         document.getElementById('authPopup').classList.add('active');
       }
     };
 
-    // 2. Если нажали "Да"
     function confirmLogin() {
-      // Меняем текст на "Успешно"
       document.getElementById('popupContent').innerHTML = `
-        <h2 style="color:#beee11;">Успешно!</h2>
-        <p style="margin-top:15px;">Можете вернуться в лаунчер.</p>
+        <h2 style="color:#beee11; margin-top:20px;">Успешно!</h2>
+        <p style="margin-top:15px; font-size:16px;">Возвращайтесь в лаунчер.</p>
       `;
       
-      // Через 1.5 секунды меняем ссылку, чтобы C# приложение это увидело
       setTimeout(function() {
-        var urlParams = new URLSearchParams(window.location.search);
-        var id = urlParams.get('launcher_id');
+        let urlParams = new URLSearchParams(window.location.search);
+        let id = urlParams.get('launcher_id');
+        // Меняем ссылку, чтобы C# приложение это увидело
         window.location.href = window.location.pathname + '?login_success=true&id=' + id;
       }, 1500);
     }
 
-    // 3. Если нажали "Нет"
     function denyLogin() {
       document.getElementById('authPopup').classList.remove('active');
-      // Очищаем ссылку
       window.location.href = window.location.pathname;
     }
   </script>
